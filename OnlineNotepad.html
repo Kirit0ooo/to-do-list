@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List with Split Layout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-image: url('painting.png'); /* Update with your image name */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      color: white;
+      text-shadow: 1px 1px 3px black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #container {
+      display: flex;
+      width: 80%;
+      height: 80%;
+      background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #task-input-section {
+      flex: 1; /* 20% */
+      padding: 20px;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #task-input-section h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    #task-input-section input {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      width: calc(100% - 22px);
+    }
+
+    #task-input-section button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    #task-input-section button:hover {
+      background-color: #45a049;
+    }
+
+    #task-list-section {
+      flex: 4; /* 80% */
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #task-list-section h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    #todo-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #todo-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    #todo-list button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    #todo-list button:hover {
+      background-color: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <!-- Task Input Section -->
+    <div id="task-input-section">
+      <h2>Add/Edit Task</h2>
+      <input type="text" id="todo-input" placeholder="Enter a new task">
+      <button id="add-btn">Add Task</button>
+    </div>
+
+    <!-- Task List Section -->
+    <div id="task-list-section">
+      <h2>To-Do List</h2>
+      <ul id="todo-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Select DOM elements
+    const input = document.getElementById('todo-input');
+    const addButton = document.getElementById('add-btn');
+    const todoList = document.getElementById('todo-list');
+
+    // Load tasks from localStorage
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.forEach((task) => addTaskToDOM(task));
+    }
+
+    // Save tasks to localStorage
+    function saveTasks() {
+      const tasks = Array.from(todoList.children).map((li) => li.firstChild.textContent.trim());
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // Add task to the DOM
+    function addTaskToDOM(task) {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${task}
+        <button onclick="removeTask(this)">Remove</button>
+      `;
+      todoList.appendChild(li);
+    }
+
+    // Add new task
+    addButton.addEventListener('click', () => {
+      const task = input.value.trim();
+      if (task) {
+        addTaskToDOM(task);
+        saveTasks();
+        input.value = '';
+      }
+    });
+
+    // Remove task
+    function removeTask(button) {
+      const li = button.parentElement;
+      todoList.removeChild(li);
+      saveTasks();
+    }
+
+    // Initialize the app
+    loadTasks();
+  </script>
+</body>
+</html>
